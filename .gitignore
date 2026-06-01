@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+
+# Build and package artifacts
+dist/
+coverage/
+*.tgz
+
+# Logs and diagnostics
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Local environment and editor files
+.env
+.env.*
+!.env.example
+.DS_Store
+.idea/
+.vscode/
+
+# TypeScript incremental state
+*.tsbuildinfo

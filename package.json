@@ -1,0 +1,52 @@
+{
+  "name": "@mnemoo/i18n",
+  "version": "0.0.0",
+  "description": "I18N for Stake Engine",
+  "keywords": [
+    "i18n",
+    "stake-engine",
+    "stake",
+    "mnemoo"
+  ],
+  "homepage": "https://github.com/mnemoo/i18n#readme",
+  "bugs": {
+    "url": "https://github.com/mnemoo/i18n/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mnemoo/i18n.git"
+  },
+  "license": "MIT",
+  "author": "Mnemoo",
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "clean": "rm -rf dist",
+    "build": "tsc -p tsconfig.json",
+    "check": "tsc -p tsconfig.json --noEmit",
+    "test": "npm run build && node --test test/*.test.mjs",
+    "prepack": "npm run clean && npm run build",
+    "prepublishOnly": "npm test"
+  }
+}
