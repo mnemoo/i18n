@@ -209,20 +209,42 @@ export type SelectForms = Record<string, string | MessageFormatter> & {
   other: string | MessageFormatter;
 };
 
-export type SvelteI18nStore = {
-  subscribe(run: (snapshot: SvelteI18nSnapshot) => void): () => void;
-  t(id: string | MessageDescriptor, values?: MessageValues): string;
+/** Accept any string while still surfacing the known keys for autocomplete. */
+export type LiteralUnion<T extends string> = T | (string & {});
+
+/**
+ * Phantom marker that carries a runtime's key union at the type level.
+ * It is optional and never assigned, so it has no runtime footprint.
+ */
+export declare const KEY_BRAND: unique symbol;
+
+/** An I18n runtime whose `t()` autocompletes a known key union, still accepting any string. */
+export type TypedI18n<K extends string> = I18n & {
+  t(id: LiteralUnion<K>, values?: MessageValues): string;
+  readonly [KEY_BRAND]?: K;
+};
+
+/** Recover the key union carried by a typed runtime, defaulting to `string`. */
+export type I18nKeysOf<T> = T extends { readonly [KEY_BRAND]?: infer K }
+  ? K extends string
+    ? K
+    : string
+  : string;
+
+export type SvelteI18nStore<K extends string = string> = {
+  subscribe(run: (snapshot: SvelteI18nSnapshot<K>) => void): () => void;
+  t(id: LiteralUnion<K> | MessageDescriptor, values?: MessageValues): string;
   setLocale(locale: Locale): void;
   load(locale: Locale, catalog: MessageCatalog): void;
   checkText(text: string, options?: TextPolicyOptions): BannedWordReport;
   sanitizeText(text: string, options?: TextPolicyOptions): SanitizedText;
   checkCatalog(catalog: MessageCatalog, options?: TextPolicyOptions): CatalogPolicyReport;
   sanitizeCatalog(catalog: MessageCatalog, options?: TextPolicyOptions): SanitizedCatalog;
-  getSnapshot(): SvelteI18nSnapshot;
+  getSnapshot(): SvelteI18nSnapshot<K>;
 };
 
-export type SvelteI18nSnapshot = I18nSnapshot & {
-  t(id: string | MessageDescriptor, values?: MessageValues): string;
+export type SvelteI18nSnapshot<K extends string = string> = I18nSnapshot & {
+  t(id: LiteralUnion<K> | MessageDescriptor, values?: MessageValues): string;
   checkText(text: string, options?: TextPolicyOptions): BannedWordReport;
   sanitizeText(text: string, options?: TextPolicyOptions): SanitizedText;
   checkCatalog(catalog: MessageCatalog, options?: TextPolicyOptions): CatalogPolicyReport;
@@ -249,11 +271,11 @@ export type ReactRuntimeLike<Element = unknown> = {
   ): Element;
 };
 
-export type ReactI18nBindings<Element = unknown> = {
+export type ReactI18nBindings<K extends string = string, Element = unknown> = {
   I18nContext: ReactContextLike<I18n>;
   I18nProvider(props: { value?: I18n; children?: unknown }): Element;
   useI18n(): I18n;
   useI18nSnapshot(): I18nSnapshot;
-  useT(): (id: string | MessageDescriptor, values?: MessageValues) => string;
+  useT(): (id: LiteralUnion<K> | MessageDescriptor, values?: MessageValues) => string;
   useLocale(): Locale;
 };

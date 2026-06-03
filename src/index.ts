@@ -13,6 +13,12 @@ export {
 } from "./config.js";
 
 export {
+  composeI18nModules,
+  defineI18nModule,
+} from "./module.js";
+export type { I18nModule, I18nModuleKeys } from "./module.js";
+
+export {
   defineMessage,
   defineMessages,
   plural,
